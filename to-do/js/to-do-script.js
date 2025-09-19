@@ -264,7 +264,7 @@ const handleClear = clearTask => {
     document.querySelector(`#task-${clearTask}`).classList.add("cleared")
 
     savedTask = localStorage.getItem(clearTask)
-    task = JSON.parse(clearTask)
+    task = JSON.parse(savedTask)
 
     task = {
         "title": task.title, 
