@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do's</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/to-do-script.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Your To-Do list</h1>
+    </header>
+
+    <main>
+        <button id="open-close-form-button" type="button"><span></span><span></span></button>
+
+        <form autocomplete="off">
+            <h2>Add a Task</h2>
+            
+            <input id="title-input" type="text" autocomplete="off" placeholder="Title">
+            <div id="autocomplete-container">
+            </div>
+            <input id="desc-input" type="text" autocomplete="off" placeholder="Description">
+            <h3>Priority</h3>
+            <select id="priority">
+                <option value="none">None</option>
+                <option value="high">!!! High</option>
+                <option value="medium">!! Medium</option>
+                <option value="low">! Low</option>
+            </select>
+            <button id="add-todo-button" type="button">Add Task </button>
+        </form>
+
+        <section id="incomplete-tasks" class="opened">
+            <h2 id="incomplete-tasks-toggle">Current Tasks <span class="arrow"></span><span class="arrow"></span></h2>
+            <button id="complete-all-button" class="effect-all-button" type="button">- Complete All -</button>
+            <p></p>
+            <ul class="high-priority">
+    
+            </ul>
+            <ul class="medium-priority">
+    
+            </ul>
+            <ul class="low-priority">
+    
+            </ul>
+            <ul class="none-priority">
+
+            </ul>
+        </section>
+
+        <section id="completed-tasks">
+            <h2 id="completed-tasks-toggle">Completed Tasks<span class="arrow"></span><span class="arrow"></span></h2>
+            <button id="delete-all-button" class="effect-all-button" type="button">- Delete All -</button>
+            <p></p>
+            <ul class="high-priority">
+    
+            </ul>
+            <ul class="medium-priority">
+    
+            </ul>
+            <ul class="low-priority">
+    
+            </ul>
+            <ul class="none-priority">
+
+            </ul>
+        </section>
+
+        <section id="deleted-tasks">
+            <h2 id="deleted-tasks-toggle">Deleted Tasks <span class="arrow"></span><span class="arrow"></span></h2>
+            <button id="clear-all-button" class="effect-all-button" type="button">- Clear All -</button>
+            <p></p>
+            <ul class="high-priority">
+    
+            </ul>
+            <ul class="medium-priority">
+    
+            </ul>
+            <ul class="low-priority">
+    
+            </ul>
+            <ul class="none-priority">
+
+            </ul>
+        </section>
+
+    </main>
+    
+</body>
+</html>
