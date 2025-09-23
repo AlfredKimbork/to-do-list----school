@@ -61,107 +61,114 @@ const completeAllButton = document.querySelector("#complete-all-button")
 const deleteAllButton = document.querySelector("#delete-all-button")
 const clearAllButton = document.querySelector("#clear-all-button")
 
-// setting a placeholder to kickstart
+// toggling sections
 
-localStorage.setItem(0, '{"title":"placeholder","priority":"none","description":"","status":"placeholder"}');
+sectionToggle(incompleteTasksToggle, incompleteTasksSection);
+sectionToggle(completedTasksToggle, completedTasksSection);
+sectionToggle(deletedTasksToggle, deletedTasksSection);
+
+// setting a placeholder to kickstart the system
+let tasks = JSON.parse(localStorage.getItem("tasks"));
+
+
+tasks ? "" : localStorage.setItem("tasks", JSON.stringify([{"title": "placeholder", "id": 0}]));
 
 // opening and closing the add form and adding tasks
 
 formBtn.addEventListener("click", () => {
-    form.classList.toggle("form-show")
-    formBtn.classList.toggle("close")
+    form.classList.toggle("form-show");
+    formBtn.classList.toggle("close");
 })
+
+// adding tasks
+
+const addTask = newTask => {
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    tasks.push(newTask)
+    
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+
+}
 
 addToDoBtn.addEventListener("click", () => {
     if(titleInput.value != "") {
+
         inputTask = {
             "title": titleInput.value,
             "priority": priorityInput.value,
             "description": descInput.value,
-            "status": "incomplete"
-        };
-
-        id = localStorage.length
-
-        localStorage.setItem(id, JSON.stringify(inputTask))
+            "status": "incomplete",
+            "id": Tasks ? Tasks.length : 0
+        }
+        
+    addTask(inputTask);
 
         location.reload()
+    }else {
+        alert("Please enter at minimum a title")
     }
 });
-
-// toggling sections
-
-sectionToggle(incompleteTasksToggle, incompleteTasksSection)
-sectionToggle(completedTasksToggle, completedTasksSection)
-sectionToggle(deletedTasksToggle, deletedTasksSection)
 
 // completing tasks and uncompleting
 
 completeAllButton.addEventListener("click", () => {
 
-    for(let i = 0; i < localStorage.length; i++) {
-        savedTask = localStorage.getItem(i);
-        task = JSON.parse(savedTask);
+    tasks = JSON.parse(localStorage.getItem("Tasks"));
+    
+    tasks.forEach(() => {
 
-        if(task.status == "incomplete") {
-            document.querySelector(`#task-${i}`).classList.add("completed")
-            task = {
-               "title": task.title, 
-               "priority": task.priority,
-               "description": task.description,
-               "status": "completed"
-           }
+        updatedTask = tasks.findIndex(task => task.status == "incomplete")
+        updatedTask == "-1" ? "" : document.querySelector(`#task-${updatedTask}`).classList.add("completed")
 
-           localStorage.setItem(i, JSON.stringify(task))
-   
+        let date = new Date();
+        let timeOfCompletion = `${date.getHours() < 10 ? "0" + date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()} ${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+    
+       
+    
+        updatedTask == "-1" ? "" : tasks[updatedTask].status = "completed";
+        updatedTask == "-1" ? "" : tasks[updatedTask].timeOfCompletion = timeOfCompletion;
+    
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    })
+
            setTimeout(() =>{
                location.reload()
+               completedTasksSection.classList.toggle("opened")
            }, 750)
-        }
-        
-    }
 });
 
 const handleComplete = completedTask => {
     document.querySelector(`#task-${completedTask}`).classList.add("completed")
 
-    savedTask = localStorage.getItem(completedTask)
-    task = JSON.parse(savedTask)
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+
+    updatedTask = tasks.findIndex(task => task.id == completedTask)
 
     let date = new Date();
     let timeOfCompletion = `${date.getHours() < 10 ? "0" + date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()} ${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
 
-    task = {
-        "title": task.title, 
-        "priority": task.priority,
-        "description": task.description,
-        "timeOfCompletion": timeOfCompletion,
-        "status": "completed"
-    };
+    tasks[updatedTask].status = "completed"
+    tasks[updatedTask].timeOfCompletion = timeOfCompletion
 
-    localStorage.setItem(completedTask, JSON.stringify(task))
-
+    localStorage.setItem("Tasks", JSON.stringify(Tasks));
 
     setTimeout(() =>{
-        location.reload()
+        location.reload()      
     }, 1250)
+  
 }
 
 const handleUncomplete = uncompletedTask => {
     document.querySelector(`#task-${uncompletedTask}`).classList.remove("completed")
 
-    savedTask = localStorage.getItem(uncompletedTask)
-    task = JSON.parse(savedTask)
+    currenTasks = JSON.parse(localStorage.getItem("Tasks"));
 
-    task = {
-        "title": task.title, 
-        "priority": task.priority,
-        "description": task.description,
-        "status": "incomplete"
-    };
+    updatedTask = Tasks.findIndex(task => task.id == uncompletedTask)
 
-    localStorage.setItem(uncompletedTask, JSON.stringify(task))
+    tasks[updatedTask].status = "incomplete"
 
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 
     setTimeout(() =>{
         location.reload()
@@ -172,47 +179,40 @@ const handleUncomplete = uncompletedTask => {
 
 deleteAllButton.addEventListener("click", () => {
 
-    for(let i = 0; i < localStorage.length; i++) {
-        savedTask = localStorage.getItem(i)
-        task = JSON.parse(savedTask)
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    
+    tasks.forEach(() => {
 
-        if(task.status == "completed") {
-            document.querySelector(`#task-${i}`).classList.add("deleted")
+        updatedTask = tasks.findIndex(task => task.status == "completed")
+        updatedTask == "-1" ? "" : document.querySelector(`#task-${updatedTask}`).classList.add("deleted")
 
-            task = {
-               "title": task.title, 
-               "priority": task.priority,
-               "description": task.description,
-               "status": "deleted"
-           }
-   
-           localStorage.setItem(i, JSON.stringify(task))
-   
+        updatedTask == "-1" ? "" : tasks[updatedTask].status = "deleted"
+    
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    })
+
            setTimeout(() =>{
                location.reload()
+               completedTasksSection.classList.toggle("opened")
            }, 750)
-        }
-        
-    }
+
 });
 
 const handleDelete = deletedTask => {
         document.querySelector(`#task-${deletedTask}`).classList.add("deleted")
+
+        tasks = JSON.parse(localStorage.getItem("tasks"));
+
+        updatedTask = currentTasks.findIndex(task => task.id == deletedTask)
     
-        savedTask = localStorage.getItem(deletedTask)
-        task = JSON.parse(savedTask)
-
-        task = {
-            "title": task.title, 
-            "priority": task.priority,
-            "description": task.description,
-            "status": "deleted"
-        };
-
-        localStorage.setItem(deletedTask, JSON.stringify(task))
+        tasks[updatedTask].status = "deleted"
+    
+        localStorage.setItem("tasks", JSON.stringify(tasks));
 
         setTimeout(() =>{
             location.reload()
+            deletedTasksSection.classList.toggle("opened")
         }, 1250)
     
 }
@@ -220,17 +220,13 @@ const handleDelete = deletedTask => {
 const handleRestore = restoreTask => {
     document.querySelector(`#task-${restoreTask}`).classList.remove("deleted")
 
-    savedTask = localStorage.getItem(restoreTask)
-    task = JSON.parse(savedTask)
+    tasks = JSON.parse(localStorage.getItem("tasks"));
 
-    task = {
-        "title": task.title, 
-        "priority": task.priority,
-        "description": task.description,
-        "status": "incomplete"
-    };
+    updatedTask = currentTasks.findIndex(task => task.id == restoreTask)
 
-    localStorage.setItem(restoreTask, JSON.stringify(task))
+    tasks[updatedTask].status = "incomplete"
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 
     setTimeout(() =>{
         location.reload()
@@ -241,40 +237,36 @@ const handleRestore = restoreTask => {
 
 clearAllButton.addEventListener("click", () => {
 
-    for(let i = 0; i < localStorage.length; i++) {
-        savedTask = localStorage.getItem(i)
-        task = JSON.parse(savedTask)
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    
+    tasks.forEach(() => {
 
-        if(task.status == "deleted") {
-            task = {
-                "title": task.title, 
-                "priority": task.priority,
-                "description": task.description,
-                "status": "cleared"
-            }
+        updatedTask = tasks.findIndex(task => task.status == "deleted")
+
+        updatedTask == "-1" ? "" : document.querySelector(`#task-${updatedTask}`).classList.add("cleared")
+
+        updatedTask == "-1" ? "" : tasks[updatedTask].status = "cleared"
     
-            localStorage.setItem(i, JSON.stringify(task))
-    
-            location.reload()           
-        }
-    }
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    })
+
+           setTimeout(() =>{
+               location.reload()
+           }, 750)
 });
 
 const handleClear = clearTask => {
     document.querySelector(`#task-${clearTask}`).classList.add("cleared")
 
-    savedTask = localStorage.getItem(clearTask)
-    task = JSON.parse(savedTask)
+    tasks = JSON.parse(localStorage.getItem("tasks"));
 
-    task = {
-        "title": task.title, 
-        "priority": task.priority,
-        "description": task.description,
-        "status": "cleared"
-    };
+    updatedTask = currentTasks.findIndex(task => task.id == clearTask)
 
-    localStorage.setItem(clearTask, JSON.stringify(task))
+    tasks[updatedTask].status = "cleared"
 
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  
     setTimeout(() =>{
         location.reload()
     }, 1250)
@@ -285,9 +277,8 @@ const handleClear = clearTask => {
 let anyIncomplete;
 let anyCompleted
 let anyDeleted
-for(i = 0; i < localStorage.length; i++) {
-    savedTask = localStorage.getItem(i)
-    task = JSON.parse(savedTask)
+
+tasks.forEach(task => {
 
     //incomplete
     task.status == "incomplete" ? anyIncomplete = true : "";
@@ -295,10 +286,10 @@ for(i = 0; i < localStorage.length; i++) {
 
     isIncomplete = task.status == "incomplete"  
 
-    isIncomplete && task.priority == "high" ? highPriorityIncompleteTasks.innerHTML += `<article id="task-${i}"><button onClick="handleComplete('${i}')" class="complete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="high">!!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${i}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
-    isIncomplete && task.priority == "medium" ? mediumPriorityIncompleteTasks.innerHTML += `<article id="task-${i}"><button onClick="handleComplete('${i}')" class="complete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="medium">!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${i}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
-    isIncomplete && task.priority == "low" ? lowPriorityIncompleteTasks.innerHTML += `<article id="task-${i}"><button onClick="handleComplete('${i}')" class="complete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="low">!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${i}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
-    isIncomplete && task.priority == "none" ? nonePriorityIncompleteTasks.innerHTML += `<article id="task-${i}"><button onClick="handleComplete('${i}')" class="complete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title">${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${i}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isIncomplete && task.priority == "high" ? highPriorityIncompleteTasks.innerHTML += `<article id="task-${task.id}"><button onClick="handleComplete('${task.id}')" class="complete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="high">!!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isIncomplete && task.priority == "medium" ? mediumPriorityIncompleteTasks.innerHTML += `<article id="task-${task.id}"><button onClick="handleComplete('${task.id}')" class="complete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="medium">!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isIncomplete && task.priority == "low" ? lowPriorityIncompleteTasks.innerHTML += `<article id="task-${task.id}"><button onClick="handleComplete('${task.id}')" class="complete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="low">!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isIncomplete && task.priority == "none" ? nonePriorityIncompleteTasks.innerHTML += `<article id="task-${task.id}"><button onClick="handleComplete('${task.id}')" class="complete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title">${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
 
     // completed
     task.status == "completed" ? anyCompleted = true : "";
@@ -306,10 +297,10 @@ for(i = 0; i < localStorage.length; i++) {
 
     isCompleted = task.status == "completed"  
 
-    isCompleted && task.priority == "high" ? highPriorityCompletedTasks.innerHTML += `<article id="task-${i}" class="completed"><button onClick="handleUncomplete('${i}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="high">!!!</span> ${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${i}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
-    isCompleted && task.priority == "medium" ? mediumPriorityCompletedTasks.innerHTML += `<article id="task-${i}" class="completed"><button onClick="handleUncomplete('${i}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="medium">!!</span> ${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${i}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
-    isCompleted && task.priority == "low" ? lowPriorityCompletedTasks.innerHTML += `<article id="task-${i}" class="completed"><button onClick="handleUncomplete('${i}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="low">!</span> ${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${i}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
-    isCompleted && task.priority == "none" ? nonePriorityCompletedTasks.innerHTML += `<article id="task-${i}" class="completed"><button onClick="handleUncomplete('${i}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title">${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${i}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isCompleted && task.priority == "high" ? highPriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="high">!!!</span> ${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isCompleted && task.priority == "medium" ? mediumPriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="medium">!!</span> ${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isCompleted && task.priority == "low" ? lowPriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="low">!</span> ${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isCompleted && task.priority == "none" ? nonePriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title">${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
 
     // deleted
     task.status == "deleted" ? anyDeleted = true : "";
@@ -317,24 +308,24 @@ for(i = 0; i < localStorage.length; i++) {
 
     isDeleted = task.status == "deleted" 
     
-    isDeleted && task.priority == "high" ? highPriorityDeletedTasks.innerHTML += `<article id="task-${i}" class="deleted"><div class="outline"><span class="background" onClick="handleClear('${i}')"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="high">!!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleRestore('${i}')" class="restore-btn"><span></span><span></span><span></span><p>Restore</p></button></article>` : "";
-    isDeleted && task.priority == "medium" ? mediumPriorityDeletedTasks.innerHTML += `<article id="task-${i}" class="deleted"><div class="outline"><span class="background" onClick="handleClear('${i}')"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="medium">!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleRestore('${i}')" class="restore-btn"><span></span><span></span><span></span><p>Restore</p></button></article>` : "";
-    isDeleted && task.priority == "low" ? lowPriorityDeletedTasks.innerHTML += `<article id="task-${i}" class="deleted"><div class="outline"><span class="background" onClick="handleClear('${i}')"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="low">!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleRestore('${i}')" class="restore-btn"><span></span><span></span><span></span><p>Restore</p></button></article>` : "";
-    isDeleted && task.priority == "none" ? nonePriorityDeletedTasks.innerHTML += `<article id="task-${i}" class="deleted"><div class="outline"><span class="background" onClick="handleClear('${i}')"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title">${task.title}</h3><p class="description">${task.description}</p><button onClick="handleRestore('${i}')" class="restore-btn"><span></span><span></span><span></span><p>Restore</p></button></article>` : "";
-}
+    isDeleted && task.priority == "high" ? highPriorityDeletedTasks.innerHTML += `<article id="task-${task.id}" class="deleted"><div class="outline"><span class="background" onClick="handleClear('${task.id}')"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="high">!!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleRestore('${task.id}')" class="restore-btn"><span></span><span></span><span></span><p>Restore</p></button></article>` : "";
+    isDeleted && task.priority == "medium" ? mediumPriorityDeletedTasks.innerHTML += `<article id="task-${task.id}" class="deleted"><div class="outline"><span class="background" onClick="handleClear('${task.id}')"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="medium">!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleRestore('${task.id}')" class="restore-btn"><span></span><span></span><span></span><p>Restore</p></button></article>` : "";
+    isDeleted && task.priority == "low" ? lowPriorityDeletedTasks.innerHTML += `<article id="task-${task.id}" class="deleted"><div class="outline"><span class="background" onClick="handleClear('${i}')"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="low">!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleRestore('${task.id}')" class="restore-btn"><span></span><span></span><span></span><p>Restore</p></button></article>` : "";
+    isDeleted && task.priority == "none" ? nonePriorityDeletedTasks.innerHTML += `<article id="task-${task.id}" class="deleted"><div class="outline"><span class="background" onClick="handleClear('${task.id}')"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title">${task.title}</h3><p class="description">${task.description}</p><button onClick="handleRestore('${task.id}')" class="restore-btn"><span></span><span></span><span></span><p>Restore</p></button></article>` : "";
+});
+// }
 
 titleInput.addEventListener("input", () => {
     autocompleteContainer.innerHTML = `<div id="autocomplete-suggestions"></div>`  
     autocompleteSuggestions = document.querySelector("#autocomplete-suggestions")
 
-    // autocompleteSuggestions.innerHTML = ""
+    autocompleteSuggestions.innerHTML = ""
 
-    for (let i = 0; i < localStorage.length; i++) {
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+
+    tasks.forEach(task => {
 
         if (titleInput.value.length >= 1) {
-
-            savedTask = localStorage.getItem(i);
-            task = JSON.parse(savedTask);
     
             isCleared = task.status == "cleared" 
             alreadyThere = false;
@@ -345,15 +336,9 @@ titleInput.addEventListener("input", () => {
             });
 
             isCleared && task.title.startsWith(titleInput.value) && !alreadyThere ? autocompleteSuggestions.innerHTML += `<p class="autocomplete-suggestion" onClick="autocomplete('${task.title}')">${task.title}</p>` : ""
-            
-            // suggestions.forEach(suggestion => {
-            //     suggestion.innerText == task.description ? alreadyThere = true : "";
-            // });
 
-            // isCleared && task.description.startsWith(descInput.value) && !alreadyThere ? autocompleteSuggestions.innerHTML += `<p class="autocomplete-suggestion" onClick="autocomplete('${task.description}')">${task.description}</p>` : ""
-            
-        } 
-    }
+        }
+    });
     
     autocompleteSuggestions.innerText == "" ? autocompleteContainer.innerHTML = "" : "";
     
