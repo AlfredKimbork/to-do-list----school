@@ -98,7 +98,7 @@ addToDoBtn.addEventListener("click", () => {
             "priority": priorityInput.value,
             "description": descInput.value,
             "status": "incomplete",
-            "id": Tasks ? Tasks.length : 0
+            "id": tasks ? tasks.length : 0
         }
         
     addTask(inputTask);
@@ -113,7 +113,7 @@ addToDoBtn.addEventListener("click", () => {
 
 completeAllButton.addEventListener("click", () => {
 
-    tasks = JSON.parse(localStorage.getItem("Tasks"));
+    tasks = JSON.parse(localStorage.getItem("tasks"));
     
     tasks.forEach(() => {
 
@@ -151,7 +151,7 @@ const handleComplete = completedTask => {
     tasks[updatedTask].status = "completed"
     tasks[updatedTask].timeOfCompletion = timeOfCompletion
 
-    localStorage.setItem("Tasks", JSON.stringify(Tasks));
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 
     setTimeout(() =>{
         location.reload()      
@@ -164,7 +164,7 @@ const handleUncomplete = uncompletedTask => {
 
     currenTasks = JSON.parse(localStorage.getItem("Tasks"));
 
-    updatedTask = Tasks.findIndex(task => task.id == uncompletedTask)
+    updatedTask = tasks.findIndex(task => task.id == uncompletedTask)
 
     tasks[updatedTask].status = "incomplete"
 
@@ -204,7 +204,7 @@ const handleDelete = deletedTask => {
 
         tasks = JSON.parse(localStorage.getItem("tasks"));
 
-        updatedTask = currentTasks.findIndex(task => task.id == deletedTask)
+        updatedTask = tasks.findIndex(task => task.id == deletedTask)
     
         tasks[updatedTask].status = "deleted"
     
@@ -222,7 +222,7 @@ const handleRestore = restoreTask => {
 
     tasks = JSON.parse(localStorage.getItem("tasks"));
 
-    updatedTask = currentTasks.findIndex(task => task.id == restoreTask)
+    updatedTask = tasks.findIndex(task => task.id == restoreTask)
 
     tasks[updatedTask].status = "incomplete"
 
@@ -261,7 +261,7 @@ const handleClear = clearTask => {
 
     tasks = JSON.parse(localStorage.getItem("tasks"));
 
-    updatedTask = currentTasks.findIndex(task => task.id == clearTask)
+    updatedTask = tasks.findIndex(task => task.id == clearTask)
 
     tasks[updatedTask].status = "cleared"
 
@@ -297,10 +297,10 @@ tasks.forEach(task => {
 
     isCompleted = task.status == "completed"  
 
-    isCompleted && task.priority == "high" ? highPriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="high">!!!</span> ${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
-    isCompleted && task.priority == "medium" ? mediumPriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="medium">!!</span> ${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
-    isCompleted && task.priority == "low" ? lowPriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title"><span class="low">!</span> ${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
-    isCompleted && task.priority == "none" ? nonePriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><h3 class="title">${task.title}</h3><p class="description">${task.description}</p><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isCompleted && task.priority == "high" ? highPriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><h3 class="title"><span class="high">!!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isCompleted && task.priority == "medium" ? mediumPriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><h3 class="title"><span class="medium">!!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isCompleted && task.priority == "low" ? lowPriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><h3 class="title"><span class="low">!</span> ${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
+    isCompleted && task.priority == "none" ? nonePriorityCompletedTasks.innerHTML += `<article id="task-${task.id}" class="completed"><button onClick="handleUncomplete('${task.id}')" class="uncomplete-btn"><span></span></button><div class="outline"><span class="background"><span class="cross"></span><span class="cross"></span></span></div><span class="time-of-completion">Completed :: ${task.timeOfCompletion}</span><h3 class="title">${task.title}</h3><p class="description">${task.description}</p><button onClick="handleDelete('${task.id}')" class="delete-btn"><img src="img/icons8-trash-can-48.png" alt=delete"><p>Delete</p></button></article>` : "";
 
     // deleted
     task.status == "deleted" ? anyDeleted = true : "";

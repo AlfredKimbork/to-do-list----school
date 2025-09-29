@@ -29,8 +29,10 @@ main {
     
         background-color: #e28d3e;
 
-        width: clamp(3rem, 7.5vw, 5rem);
-        height: clamp(3rem, 7.5vw, 5rem);
+        width: 5rem;
+        height: 5rem;
+        /* width: clamp(3rem, 7.5vw, 5rem);
+        height: clamp(3rem, 7.5vw, 5rem); */
 
         border-radius: 100%;
         border: none;
@@ -210,6 +212,7 @@ main {
         position: relative;
         min-height: 3rem;
         margin-left: 1rem;
+        margin-bottom: 1.5rem;
     }
     
     ul {
@@ -379,6 +382,10 @@ main {
         cursor: pointer;
     }
 
+    #completed-tasks .uncomplete-btn {
+        top: 1.494rem; 
+    }
+
     .completed .uncomplete-btn span {
 
         width: 1rem;
@@ -420,6 +427,10 @@ main {
         border-radius: 1rem;
 
         cursor: pointer;
+    }
+
+    #completed-tasks .delete-btn {
+        top: 1.494rem; 
     }
 
     .delete-btn img {
@@ -476,6 +487,10 @@ main {
 
         transition: .5s ease;
         cursor: pointer;
+    }
+
+    #completed-tasks .outline, #completed-tasks .background {
+        top: 1.494rem; 
     }
 
     .deleted .background {
