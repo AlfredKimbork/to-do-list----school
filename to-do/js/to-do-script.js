@@ -118,7 +118,8 @@ completeAllButton.addEventListener("click", () => {
     tasks.forEach(() => {
 
         updatedTask = tasks.findIndex(task => task.status == "incomplete")
-        updatedTask == "-1" ? "" : document.querySelector(`#task-${updatedTask}`).classList.add("completed")
+        updatedTask == -1 ? "" : document.querySelector(`#task-${updatedTask}`).classList.add("completed")
+        console.log(updatedTask)
 
         let date = new Date();
         let timeOfCompletion = `${date.getHours() < 10 ? "0" + date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()} ${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
